@@ -57,7 +57,7 @@ let lessons=[{
         id:6,
         details:"Sessions with the coach sasa",
         name:"Basketball",
-        image:"https://kit8.net/images/thumbnails/580/386/detailed/4/basketball_players@2x.png",
+        image:"https://img.graphicsurf.com/2020/08/Back-to-school-autumn-illustration.jpg",
         price:  300 ,
         Location:"Abudhabi, Uae",
         inventory:5,
