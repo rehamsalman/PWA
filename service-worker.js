@@ -3,7 +3,7 @@ var cacheFiles=[
     'index.html',
     'lessons.js',
     'cw1.webmanifest',
-    'intel.png'
+    'store.png'
 
     
 ];
