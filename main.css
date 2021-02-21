@@ -1,0 +1,30 @@
+.navbar-brand img{
+    height:50px;
+    padding-left:10%;
+}
+
+.navbar-nav li{
+padding:0 35px;
+}
+
+.navbar-nav li a:hover{
+    text-decoration: orange;
+}
+.courseheading{
+    font-size: 50px;
+    font-weight: 600px;
+    font-family: 'Source Sans Pro', sans-serif;
+    letter-spacing: -0.2px;
+   
+    
+}
+
+.card{
+    transition: transform 0.9s;
+}
+.card:hover{
+    transform: scale(1.02);
+}
+.nav-link{
+    color:black;
+}

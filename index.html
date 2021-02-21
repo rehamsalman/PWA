@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset = "UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>After School Club</title>
+        <link rel="stylesheet" href="main.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> 
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@700&display=swap" rel="stylesheet">
+        <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+        <script src="lessons.js"> </script>
+        <link rel="manifest" href="cw1.wemanifest">
+        <style>
+          .lessons{
+            border:1px grey solid;
+            padding:20px;
+            margin:20px;
+            text-align: center;
+          }
+        </style>
+        <script>
+          if('serviceWorker' in navigator){
+            navigator.serviceWorker.register('service-worker.js')
+          }
+        </script>
+    </head>
+    <body>
+
+    <div id="app">
+        <nav class="navbar navbar-expand-md bg-white shadow-sm sticky-top">
+          <a class="navbar-brand ml-5" href="#"><img src="intel.png" width="100px" height=120px></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+              <span class="navbar-toggler-icon mr-auto"></span></button>
+          <div class="collapse navbar-collapse" id="collapsibleNavbar">
+          <ul class="navbar-nav ml-auto mr-5">
+            <li class="nav-item active"><a class="nav-link" href="#">Home</a></li>
+            <li class="nav-item active"> <a class="nav-link" href="#">About</a> </li>
+            <li class="nav-item active"> <a class="nav-link" href="#">Explore</a> </li>
+          </ul>
+          
+          <button class="btn btn-danger navbar-btn" v-if ="viewshoppingcart()" v-on:click="gotocartpage()"><span>{{lengthofcart}}</span><span class="fas fa-cart-plus">Cart</span> </button>
+          <button class="btn btn-danger navbar-btn" v-else disabled> Cart</button>
+         
+      </div>
+          
+        </nav>
+        <div v-if="showProduct" > 
+          <div class="courseheading text-center ml-5 mt-5" > Explore 100s of courses taught <br>by world class institutes </div>
+         
+          <h4 class="text-center mt-5" >Sort By:</h4>
+          <div class="text-center">
+                <input name="element" value="name" type="radio" @click="sortingbyelement"><label>Title</label>
+                <input name="element" value="price" type="radio" @click="sortingbyelement"> <label>Price</label>
+                <input name="element" value="Location" type="radio" @click="sortingbyelement"><label>Location</label>
+                <input name="element" value="inventory" type="radio" @click="sortingbyelement"><label>Stock</label>
+                <input name="choice" value="asc" type="radio" @click="sortingbyelement"><label>Ascending</label>
+                <input name="choice" value="desc" type="radio" @click="sortingbyelement"><label>Descending</label>
+              </div>
+      <div class="row ml-5">
+        <div v-for="lesson in lessons">
+          <div class="col-sm-4 ">
+            <div class="hovercard">
+            <div class="card shadow-sm mt-5 md-4 ml-5 " style="width:300px" height="100px">
+              <img class="card-img-top img-fluid" v-bind:src="lesson.image"  alt="Card image" style="width:100%">
+              <div class="card-body">
+                <h3 class="card-title text center">{{lesson.name}}</h3>
+                <p class="card-text text center"> Additional Details : {{lesson.details}}</p>
+                <p class="card-text">Price : $ {{lesson.price}} </p>
+                <p class="card-text"> Location: {{lesson.Location}}</p>
+               <p class="card-text"> Spaces : {{lesson.inventory}}</p>
+               <p class="card-text"><small class="text-muted">Sale ends in 5 days</small></p>
+               <p class ="card-text">  {{lesson.inventory-cartItemCount(lesson.id)}} Courses Left!</p>
+                <button class="btn btn-primary"  v-on:click="addtocart(lesson)" v-if="productavailable(lesson)">Add to cart</button>
+              <button class="btn btn-primary"  v-else disabled> Add to cart</button>
+            </div>
+      
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+   
+          </div>
+          <div v-else="showcartpage">
+            <div class="courseheading text-center ml-5 mt-5" >View your items in cart <br>One stop away from world class learning! </div>
+             <button class="btn btn-danger navbar-btn ml-5"  v-on:click="gobacktoproducts()">Go to Product</button>
+           <div class="row ml-5">
+             <div v-for="a in cart">
+               <div class="col-sm-4  ">
+                 <div class="card shadow-sm mt-5 md-4 ml-5 " style="width:300px" height="100px">
+                  <img class="card-img-top img-fluid" v-bind:src="a.image"  alt="Card image" style="width:100%">
+                   <div class="card-body">
+                     <h3 class="card-title ">{{a.name}}</h3>
+                     <p class="card-text"> Additional Details :{{a.details}}</p>
+                     <p class="card-text">Price : {{a.price}}</p>
+                      <p class="card-text">Location : {{a.Location}}</p>
+                    
+                    <button class="btn btn-primary"  v-on:click="removefromcart(a)"> Remove</button>
+                   </div>
+                 </div>
+           </div>
+             </div>
+             </div>
+             <div class="container float-right shadow p-3 mb-5 bg-white rounded mt-5" width="70%">
+              <h2> Checkout </h2>
+              <form class="form-horizontal" >
+                <div class="form-group">
+                  <label class="control-label col-sm-2" >Name:</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="person.name" placeholder="Enter your name here" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2" >Phone:</label>
+                  <div class="col-sm-10">          
+                    <input type="number" v-model.number="person.number" class="form-control" placeholder="Enter phone number" required>
+                  </div>
+                </div>
+                <div class="form-group">        
+                  <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" v-on:click="finalmessage()" class="btn btn-primary" v-if="cancheckout()" >Checkout</button>
+                    <button type="submit" v-on:click="finalmessage()" class="btn btn-primary" v-else disabled >Checkout</button>
+                    
+                  </div>
+                </div>
+              </form>
+            </div>
+    </div>
+    </div>
+
+          <script type="text/javascript">
+            var webstore = new Vue({
+              el: "#app",
+              data:{
+                lessons:lessons,
+                cart:[],
+                showProduct:true,
+                showcartpage:false,
+                productspageback:false,
+                person:{
+                  name:"",
+                  number:"",
+          }
+              },
+      
+              
+              methods:{
+                addtocart(reham){
+                this.cart.push(reham);
+                reham.inventory-=1;
+              },
+              gotocartpage(){
+            this.showProduct=false;
+            this.showcartpage=true;
+                },
+            
+                gobacktoproducts(){
+               
+                  this.showcartpage=false;
+                  this.showProduct=true;
+                },
+                
+                
+                productavailable(check){
+                if (check.inventory > this.cartItemCount(check.id)){
+                  return true;
+                }
+                
+              },
+              cancheckout(){
+                if (this.person.name!=="" && this.person.number!==""){
+                  if(this.hasNumber==true){
+                    return false;  
+                  }
+                  else{
+                    return true;
+                  }
+                }
+                else{
+                  
+                  if(this.person.number==="" || this.person.name===""){
+                    return false;
+                    }
+                
+                  return false;
+                }
+
+              },
+              sortingbyelement() {
+                var element = document.querySelector('input[name="element"]:checked').value;
+                var choice = document.querySelector('input[name="choice"]:checked');
+                if (element != null && choice != null) {
+                    console.log("The element being sorted: " + element + " choice: " + choice.value);
+                    if (choice.value == "asc") {
+                        this.lessons.sort((a, b) => (a[element] < b[element] ? -1 : a[element] > b[element] ? 1 : 0));
+                    }
+                    else if (choice.value == "desc") {
+                        this.lessons.sort((a, b) => (a[element] > b[element] ? -1 : a[element] < b[element] ? 1 : 0));
+                    }
+                }
+                else {
+                    this.lessons.sort((a, b) => (a[element] < b[element] ? -1 : a[element] > b[element] ? 1 : 0));
+                }
+            },
+
+        removefromcart(lesson){
+       if(this.cart.splice(this.cart.indexOf(lesson),1)){
+         lesson.inventory+=1;
+         console.log("itemm removed");
+       }
+          else{
+            console.log("nothing");
+          }
+        },
+              cartItemCount(id){ //how many math lessons  instances in the cart
+                let count=0;
+                for (let i=0; i<this.cart.length; i++){
+                  if (this.cart[i]===id){
+                    count++;
+            }
+            }
+               return count;       
+            },
+            viewshoppingcart(){
+           if(this.cart.length>0 ){
+            return true;
+           }
+          },
+          finalmessage(){
+            alert("Order sbmited");
+          }
+          },
+            
+            computed:{
+              lengthofcart(){
+                return this.cart.length;
+              },
+              hasNumber() {
+                  return /\d/.test(this.person.name);
+},
+}
+              
+            
+          
+            });
+          </script>
+          
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+</body>
+</html>
